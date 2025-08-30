@@ -9,7 +9,7 @@ public class StageIDHolder : MonoBehaviour
     public static StageIDHolder Instance { get; private set; }
 
     // 現在のステージID
-    public int StageID { get; private set; } = -1;
+    public int StageID { get; private set; } = 1;
 
     private void Awake()
     {
