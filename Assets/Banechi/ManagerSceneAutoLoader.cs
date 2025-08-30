@@ -1,28 +1,22 @@
-//  ManagerSceneAutoLoader.cs
-//  http://kan-kikuchi.hatenablog.com/entry/ManagerSceneAutoLoader
-//
-//  Created by kan.kikuchi on 2016.08.04.
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Cysharp.Threading.Tasks;
 
-/// <summary>
-/// Awake前にManagerSceneを自動でロードするクラス
-/// </summary>
 public class ManagerSceneAutoLoader
 {
-
-    //ゲーム開始時(シーン読み込み前)に実行される
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void LoadManagerScene()
+    private static void LoadManagerSceneAsync()
     {
-        string managerSceneName = "ManagerScene";
-
-        //ManagerSceneが有効でない時(まだ読み込んでいない時)だけ追加ロードするように
-        if (!SceneManager.GetSceneByName(managerSceneName).IsValid())
+        UniTask.Void(async () =>
         {
-            SceneManager.LoadScene(managerSceneName, LoadSceneMode.Additive);
-        }
-    }
+            string managerSceneName = "ManagerScene";
 
+            if (!SceneManager.GetSceneByName(managerSceneName).IsValid())
+            {
+                var op = SceneManager.LoadSceneAsync(managerSceneName, LoadSceneMode.Additive);
+                await op; // ManagerSceneがロード完了するまで待つ
+                SceneManager.SetActiveScene(SceneManager.GetSceneByName(managerSceneName));
+            }
+        });
+    }
 }
