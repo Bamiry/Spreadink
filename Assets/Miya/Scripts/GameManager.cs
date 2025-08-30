@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     [Header("ステージ設定")]
     [SerializeField] private StagesScriptableObject stagesSO;
     [SerializeField] private Image stageImage;
+    [SerializeField] private Image renderStageImage; 
     [SerializeField] private TouchDetector touchDetector;
 
     [Header("ヘッダー設定")]
@@ -48,19 +49,17 @@ public class GameManager : MonoBehaviour
 
     async UniTaskVoid Start()
     {
+        await UniTask.WaitUntil(() => ManagerSceneAutoLoader.IsManagerSceneLoaded);
         await UniTask.DelayFrame(1);
         InitializeGame();
     }
 
     void Update()
     {
-        if (Input.GetKeyDown("space"))
-        {
-            handle.Cancel();
-        }
-
         if (!IsGamePaused)
+        {
             colorCounter.CountEachColor(renderTexture, odaiColors, OnCountCompleted);
+        }
     }
 
     void InitializeGame()
@@ -115,6 +114,7 @@ public class GameManager : MonoBehaviour
         if (CurrentStage == null) return;
 
         stageImage.sprite = CurrentStage.Image;
+        renderStageImage.sprite = CurrentStage.Image;
     }
 
     void CreatePalatte()
@@ -134,7 +134,11 @@ public class GameManager : MonoBehaviour
 
     void DropInk(Vector2 position)
     {
-        if (IsGamePaused) return;
+        if (IsGamePaused)
+        {
+            Debug.Log("Game is paused. Cannot drop ink.");
+            return;
+        }
 
         if (currentPalatteInk == null) return;
         if (currentPalatteInk.IsUsed) return;
@@ -152,6 +156,9 @@ public class GameManager : MonoBehaviour
             .BindToLocalScaleXY(ink.transform)
             .AddTo(handle);
 
+        // 音再生
+        SoundManager.Instance.PlayOneShot(SoundName.InkDrop);
+
         currentPalatteInk.OnUse();
     }
 
@@ -159,6 +166,7 @@ public class GameManager : MonoBehaviour
     {
         handle.Cancel();
         IsGamePaused = true;
+        Debug.Log("Ink spreading stopped.");
     }
 
     void PauseInkSpreading()
@@ -181,9 +189,11 @@ public class GameManager : MonoBehaviour
 
     void OnCountCompleted(float[] ratios, long elapsedMs)
     {
+        Debug.Log($"Count completed in {elapsedMs} ms. Ratios: {string.Join(", ", ratios)}");
         if (ratios[^1] <= 0)
         {
             StopInkSpreading();
+            ResultManager.Instance.StartResult(CurrentStage, ratios);
         }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class PalatteInk : MonoBehaviour, IPointerDownHandler
+public class PalatteInk : MonoBehaviour, IPointerClickHandler
 {
     #region 参照
     [SerializeField] private GameObject frame;
@@ -42,7 +42,7 @@ public class PalatteInk : MonoBehaviour, IPointerDownHandler
         colorImage.color = Color.grey;
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public void OnPointerClick(PointerEventData eventData)
     {
         TurnSelected();
         OnTouch?.Invoke(this);

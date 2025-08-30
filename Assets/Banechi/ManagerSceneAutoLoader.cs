@@ -4,6 +4,8 @@ using Cysharp.Threading.Tasks;
 
 public class ManagerSceneAutoLoader
 {
+    public static bool IsManagerSceneLoaded { get; private set; } = false;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void LoadManagerSceneAsync()
     {
@@ -17,6 +19,8 @@ public class ManagerSceneAutoLoader
                 await op; // ManagerSceneがロード完了するまで待つ
                 SceneManager.SetActiveScene(SceneManager.GetSceneByName(managerSceneName));
             }
+
+            IsManagerSceneLoaded = true;
         });
     }
 }
