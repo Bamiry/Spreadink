@@ -49,7 +49,6 @@ public class TitleManager : MonoBehaviour
 
     private UniTaskVoid TransitionToInGame(int levelId)
     {
-        GameManager.CurrentStageId = levelId;
         SceneManager.LoadScene("InGame");
         return new UniTaskVoid();
     }
