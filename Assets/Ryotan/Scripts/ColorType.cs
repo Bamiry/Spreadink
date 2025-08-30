@@ -7,5 +7,6 @@
     Orange,
     Purple,
     SkyBlue,
-    Pink
+    Pink,
+    White
 }

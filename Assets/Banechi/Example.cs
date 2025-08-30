@@ -9,8 +9,11 @@ public class Example : MonoBehaviour
     public RenderTexture targetRenderTexture;
     public TextMeshProUGUI resultText;
 
-    [Header("カウントする色のリスト")]
-    public List<Color> targetColors = new List<Color>();
+    [Header("カウントする色のリスト (ColorType)")]
+    public List<ColorType> targetColorTypes = new List<ColorType>();
+
+    // ColorTypeから変換したColor配列（関数呼び出し用）
+    private List<Color> convertedColors = new List<Color>();
 
     [Header("色の許容誤差")]
     [Range(0, 1)]
@@ -18,38 +21,55 @@ public class Example : MonoBehaviour
 
     void Start()
     {
-        // 事前にリストに色を追加しておく
-        targetColors.Add(Color.white); // 0番目
+        // 事前にリストに白色を追加しておく
+        targetColorTypes.Add(ColorType.White); // 白
+        UpdateConvertedColors();
+
+    }
+
+    // targetColorTypesからconvertedColorsへ変換
+    private void UpdateConvertedColors()
+    {
+        convertedColors = targetColorTypes.ConvertAll(InkColorUtil.GetColor);
+        Debug.Log($"Converted {convertedColors.Count} colors.");
+        // convertedColorsを１つ一つログに出力
+        foreach (var color in convertedColors)
+        {
+            //タイプもログに出力
+            var colorType = targetColorTypes[convertedColors.IndexOf(color)];
+            Debug.Log($"Converted Color: {color} (Type: {colorType})");
+        }
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            // 新しいメソッドを呼び出す
-            colorCounter.CountEachColor(targetRenderTexture, targetColors, tolerance, OnCountCompleted);
+            UpdateConvertedColors();
+            colorCounter.CountEachColor(targetRenderTexture, new List<Color> { Color.red }, tolerance, OnCountCompleted);
         }
     }
 
     public void CountButtonPressed()
     {
-        colorCounter.CountEachColor(targetRenderTexture, targetColors, tolerance, OnCountCompleted);
+        UpdateConvertedColors();
+        colorCounter.CountEachColor(targetRenderTexture, convertedColors, tolerance, OnCountCompleted);
     }
 
     // 各色の割合(float)と実行時間(ms)を受け取るように変更
     private void OnCountCompleted(float[] ratios, long elapsedMs)
     {
-        if (ratios.Length != targetColors.Count) return;
+        if (ratios.Length != targetColorTypes.Count) return;
 
-        string resultLog = "";
+        string resultLog = "\n";
 
         for (int i = 0; i < ratios.Length; i++)
         {
-            string log = $"Color[{i}] ({targetColors[i]}): {ratios[i]:P1}";
+            string log = $"Color[{i}] ({targetColorTypes[i]}): {ratios[i]:P1}";
             resultLog += log + "\n";
         }
 
-        resultLog += $"\time: {elapsedMs} ms";
+        resultLog += $"\ntime: {elapsedMs} ms";
 
         if (resultText != null)
         {
