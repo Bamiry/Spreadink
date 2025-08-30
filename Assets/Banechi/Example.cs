@@ -15,9 +15,6 @@ public class Example : MonoBehaviour
     // ColorTypeから変換したColor配列（関数呼び出し用）
     private List<Color> convertedColors = new List<Color>();
 
-    [Header("色の許容誤差")]
-    [Range(0, 1)]
-    public float tolerance = 0.1f;
 
     void Start()
     {
@@ -43,17 +40,12 @@ public class Example : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            UpdateConvertedColors();
-            colorCounter.CountEachColor(targetRenderTexture, new List<Color> { Color.red }, tolerance, OnCountCompleted);
-        }
     }
 
     public void CountButtonPressed()
     {
         UpdateConvertedColors();
-        colorCounter.CountEachColor(targetRenderTexture, convertedColors, tolerance, OnCountCompleted);
+        colorCounter.CountEachColor(targetRenderTexture, convertedColors, OnCountCompleted);
     }
 
     // 各色の割合(float)と実行時間(ms)を受け取るように変更
@@ -65,7 +57,7 @@ public class Example : MonoBehaviour
 
         for (int i = 0; i < ratios.Length; i++)
         {
-            string log = $"Color[{i}] ({targetColorTypes[i]}): {ratios[i]:P1}";
+            string log = $"Color[{i}] ({targetColorTypes[i]}): {ratios[i]}";
             resultLog += log + "\n";
         }
 

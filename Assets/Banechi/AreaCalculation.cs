@@ -10,6 +10,7 @@ public class ColorCounter : MonoBehaviour
     private ComputeBuffer _resultBuffer;
     private ComputeBuffer _colorsBuffer;
     private int _kernelIndex;
+    private float _tolerance = 0.3f;
 
     void Start()
     {
@@ -23,7 +24,7 @@ public class ColorCounter : MonoBehaviour
     }
 
     // 色のリストを受け取り、各色の割合(float)と実行時間(ms)を返すように変更
-    public void CountEachColor(RenderTexture targetTexture, List<Color> colors, float tolerance, Action<float[], long> onCompleted)
+    public void CountEachColor(RenderTexture targetTexture, List<Color> colors, Action<float[], long> onCompleted)
     {
         if (colors == null || colors.Count == 0)
         {
@@ -50,7 +51,7 @@ public class ColorCounter : MonoBehaviour
         computeShader.SetTexture(_kernelIndex, "InputTexture", targetTexture);
         computeShader.SetBuffer(_kernelIndex, "TargetColors", _colorsBuffer);
         computeShader.SetInt("TargetColorCount", colorCount);
-        computeShader.SetFloat("Tolerance", tolerance);
+        computeShader.SetFloat("Tolerance", _tolerance);
         computeShader.SetBuffer(_kernelIndex, "ResultBuffer", _resultBuffer);
 
         // 4. 実行と結果取得
