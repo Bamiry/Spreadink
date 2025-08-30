@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     [Header("ステージ設定")]
     [SerializeField] private StagesScriptableObject stagesSO;
     [SerializeField] private Image stageImage;
+    [SerializeField] private Image renderStageImage; 
     [SerializeField] private TouchDetector touchDetector;
 
     [Header("ヘッダー設定")]
@@ -43,8 +44,7 @@ public class GameManager : MonoBehaviour
     #region 状態変数
     private CompositeMotionHandle handle;
     private PalatteInk currentPalatteInk;
-    public static int CurrentStageId = 1;
-    private List<Color> odaiColors = new ();
+    private List<Color> odaiColors = new();
     #endregion
 
     async UniTaskVoid Start()
@@ -55,18 +55,13 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown("space"))
-        {
-            handle.Cancel();
-        }
-
         if (!IsGamePaused)
             colorCounter.CountEachColor(renderTexture, odaiColors, OnCountCompleted);
     }
 
     void InitializeGame()
     {
-        CurrentStage = GetStage(CurrentStageId);
+        CurrentStage = GetStage();
         odaiColors = CurrentStage.AvailableColors;
         odaiColors.Add(Color.white);
         CreateOdaiTextViews();
@@ -87,8 +82,9 @@ public class GameManager : MonoBehaviour
         IsGamePaused = false;
     }
 
-    StageInfo GetStage(int id)
+    StageInfo GetStage()
     {
+        int id = StageIDHolder.Instance.StageID;
         if (stagesSO.StageDict.TryGetValue(id, out var stage))
         {
             return stage;
@@ -115,6 +111,7 @@ public class GameManager : MonoBehaviour
         if (CurrentStage == null) return;
 
         stageImage.sprite = CurrentStage.Image;
+        renderStageImage.sprite = CurrentStage.Image;
     }
 
     void CreatePalatte()
