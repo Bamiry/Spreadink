@@ -181,6 +181,7 @@ public class GameManager : MonoBehaviour
         if (ratios[^1] <= 0)
         {
             StopInkSpreading();
+            ResultManager.Instance.StartResult(CurrentStage, ratios);
         }
     }
 }

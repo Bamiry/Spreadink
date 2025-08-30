@@ -6,12 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Banechi/Scenes/ManagerScene.unity
-    guid: 2c6794ced5cd61744975c1006a10c77d
-  - enabled: 1
     path: Assets/Ryotan/Scenes/Title.unity
     guid: 809718a64dd2a6d44b950cd89ef5aa1a
   - enabled: 1
     path: Assets/Miya/Scene/InGame.unity
     guid: 5daf64869ecc84b7b87166990e7f1df1
-  m_configObjects: {}
+  - enabled: 0
+    path: Assets/Banechi/AreaCalculationTest.unity
+    guid: c4940192a22d99943acc36130bb84d3f
