@@ -131,9 +131,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 979684031}
-  - component: {fileID: 979684032}
+  - component: {fileID: 979684033}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: StageIDHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -154,7 +154,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &979684032
+--- !u!114 &979684033
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -163,11 +163,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 979684030}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4d128ed384cbb04a96b9fae44f1ccec, type: 3}
+  m_Script: {fileID: 11500000, guid: 15a847bd39bb312449a20a774d10c5e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  titleSceneName: Title
-  inGameSceneName: InGame
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
