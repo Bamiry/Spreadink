@@ -50,6 +50,7 @@ public class TitleManager : MonoBehaviour
     public void OnPressReturnToTitleButton()
     {
         _hamburgerMenu.SetActive(false);
+        _hamburgerButton.SetActive(true);
         _levelSelectCanvas.SetActive(false);
         _titleCanvas.SetActive(true);
     }
