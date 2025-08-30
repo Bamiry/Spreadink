@@ -9,8 +9,8 @@ public class StageInfo
     [SerializeField] private int _id;
     public int Id => _id;
 
-    [SerializeField] private Image _image;
-    public Image Image => _image;
+    [SerializeField] private Sprite _image;
+    public Sprite Image => _image;
 
     [SerializeField] private List<ColorType> _odaiColors;
     [SerializeField] private List<float> _odaiRatios;
