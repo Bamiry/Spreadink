@@ -490,6 +490,7 @@ GameObject:
   m_Component:
   - component: {fileID: 410854924}
   - component: {fileID: 410854925}
+  - component: {fileID: 410854926}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -538,6 +539,21 @@ MonoBehaviour:
   hamburgerBtn: {fileID: 242503284}
   odaiTextViews: {fileID: 307762024}
   odaiTextViewPrefab: {fileID: 1954893539863083839, guid: acd015668f40f44358669bbd49681309, type: 3}
+  colorCounter: {fileID: 410854926}
+  renderTexture: {fileID: 8400000, guid: 915f177902c6d44009d6e09f722b28dc, type: 2}
+--- !u!114 &410854926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 410854923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c999f75a50bd344d9819fc5296da607, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  computeShader: {fileID: 7200000, guid: 1ac020c29202b2e4e815a8ff51e491e5, type: 3}
 --- !u!1 &431802391
 GameObject:
   m_ObjectHideFlags: 0

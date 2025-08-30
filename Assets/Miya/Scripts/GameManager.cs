@@ -24,12 +24,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private StagesScriptableObject stagesSO;
     [SerializeField] private Image stageImage;
     [SerializeField] private TouchDetector touchDetector;
-    [SerializeField] private int defaultStageId = 1;
 
     [Header("ヘッダー設定")]
     [SerializeField] private Button hamburgerBtn;
     [SerializeField] private Transform odaiTextViews;
     [SerializeField] private GameObject odaiTextViewPrefab;
+
+    [Header("面積計算")]
+    [SerializeField] private ColorCounter colorCounter;
+    [SerializeField] private RenderTexture renderTexture;
     #endregion
 
     #region プロパティ
@@ -40,26 +43,46 @@ public class GameManager : MonoBehaviour
     #region 状態変数
     private CompositeMotionHandle handle;
     private PalatteInk currentPalatteInk;
-    public static int CurrentStageId;
+    public static int CurrentStageId = 1;
+    private List<Color> odaiColors = new ();
     #endregion
 
     async UniTaskVoid Start()
     {
-        CurrentStageId = defaultStageId;
-
         await UniTask.DelayFrame(1);
         InitializeGame();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown("space"))
+        {
+            handle.Cancel();
+        }
+
+        if (!IsGamePaused)
+            colorCounter.CountEachColor(renderTexture, odaiColors, OnCountCompleted);
     }
 
     void InitializeGame()
     {
         CurrentStage = GetStage(CurrentStageId);
+        odaiColors = CurrentStage.AvailableColors;
+        odaiColors.Add(Color.white);
         CreateOdaiTextViews();
         CreateStage();
         CreatePalatte();
 
         handle = new CompositeMotionHandle();
         touchDetector.OnTouch += (pos) => DropInk(pos);
+
+        hamburgerBtn.onClick.AddListener(() =>
+        {
+            if (IsGamePaused)
+                ResumeInkSpreading();
+            else
+                PauseInkSpreading();
+        });
 
         IsGamePaused = false;
     }
@@ -109,16 +132,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown("space"))
-        {
-            handle.Cancel();
-        }
-    }
-
     void DropInk(Vector2 position)
     {
+        if (IsGamePaused) return;
+
         if (currentPalatteInk == null) return;
         if (currentPalatteInk.IsUsed) return;
 
@@ -136,5 +153,37 @@ public class GameManager : MonoBehaviour
             .AddTo(handle);
 
         currentPalatteInk.OnUse();
+    }
+
+    void StopInkSpreading()
+    {
+        handle.Cancel();
+        IsGamePaused = true;
+    }
+
+    void PauseInkSpreading()
+    {
+        foreach (var motion in handle)
+        {
+            motion.PlaybackSpeed = 0;
+        }
+        IsGamePaused = true;
+    }
+
+    void ResumeInkSpreading()
+    {
+        foreach (var motion in handle)
+        {
+            motion.PlaybackSpeed = 1;
+        }
+        IsGamePaused = false;
+    }
+
+    void OnCountCompleted(float[] ratios, long elapsedMs)
+    {
+        if (ratios[^1] <= 0)
+        {
+            StopInkSpreading();
+        }
     }
 }
