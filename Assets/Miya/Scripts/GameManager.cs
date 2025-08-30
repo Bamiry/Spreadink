@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject inkPrefab;
     [SerializeField] private float inkDefaultScale = 0.05f;
     [SerializeField] private float durationToMaxScale = 1f;
+    [SerializeField] private Camera calcCamera;
 
     [Header("パレット設定")]
     [SerializeField] private Transform palatte;
@@ -32,7 +33,8 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region 状態変数
-    CompositeMotionHandle handle;
+    private CompositeMotionHandle handle;
+    private PalatteInk currentPalatteInk;
     #endregion
 
     async UniTaskVoid Start()
@@ -45,24 +47,52 @@ public class GameManager : MonoBehaviour
     {
         IsGamePaused = false;
 
-        handle = new CompositeMotionHandle();
+        CreatePalatte();
 
+        handle = new CompositeMotionHandle();
         touchDetector.OnTouch += (pos) => DropInk(pos);
+    }
+
+    void CreatePalatte()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            var palatteInk = Instantiate(palattePrefab, palatte).GetComponent<PalatteInk>();
+            palatteInk.OnTouch += (palatteInk) =>
+            {
+                if (!palatteInk.IsUsed)
+                    currentPalatteInk = palatteInk;
+            };
+            palatteInk.Set(Color.HSVToRGB(i / 4f, 1f, 1f));
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown("space"))
+        {
+            handle.Cancel();
+        }
     }
 
     void DropInk(Vector2 position)
     {
+        if (currentPalatteInk == null) return;
+        if (currentPalatteInk.IsUsed) return;
+
         // 生成
         var ink = Instantiate(inkPrefab, inks);
-        ink.transform.position = position;
+        ink.transform.position = calcCamera.ScreenToWorldPoint(new Vector3(position.x, position.y, 10f));
 
         // 色設定
         var image = ink.GetComponent<Image>();
-        image.color = Color.Lerp(Color.white, Color.clear, 0.5f);
+        image.color = currentPalatteInk.Color;
 
         // 広げる
         LMotion.Create(inkDefaultScale * Vector2.one, Vector2.one, durationToMaxScale)
             .BindToLocalScaleXY(ink.transform)
             .AddTo(handle);
+
+        currentPalatteInk.OnUse();
     }
 }
