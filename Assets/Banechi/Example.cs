@@ -36,21 +36,20 @@ public class Example : MonoBehaviour
         colorCounter.CountEachColor(targetRenderTexture, targetColors, tolerance, OnCountCompleted);
     }
 
-    // uintの配列と実行時間(ms)を受け取るように変更
-    private void OnCountCompleted(uint[] counts, long elapsedMs)
+    // 各色の割合(float)と実行時間(ms)を受け取るように変更
+    private void OnCountCompleted(float[] ratios, long elapsedMs)
     {
-        if (counts.Length != targetColors.Count) return;
+        if (ratios.Length != targetColors.Count) return;
 
         string resultLog = "";
 
-        for (int i = 0; i < counts.Length; i++)
+        for (int i = 0; i < ratios.Length; i++)
         {
-            float ratio = counts[i] / (float)targetRenderTexture.width / (float)targetRenderTexture.height;
-            string log = $"Color[{i}] ({targetColors[i]}): {counts[i]} pixels ({ratio:P1})";
+            string log = $"Color[{i}] ({targetColors[i]}): {ratios[i]:P1}";
             resultLog += log + "\n";
         }
 
-        resultLog += $"\ntime: {elapsedMs} ms";
+        resultLog += $"\time: {elapsedMs} ms";
 
         if (resultText != null)
         {

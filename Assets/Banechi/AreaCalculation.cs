@@ -22,12 +22,12 @@ public class ColorCounter : MonoBehaviour
         _colorsBuffer?.Release();
     }
 
-    // 色のリストを受け取り、各色のピクセル数と実行時間(ms)を返すように変更
-    public void CountEachColor(RenderTexture targetTexture, List<Color> colors, float tolerance, Action<uint[], long> onCompleted)
+    // 色のリストを受け取り、各色の割合(float)と実行時間(ms)を返すように変更
+    public void CountEachColor(RenderTexture targetTexture, List<Color> colors, float tolerance, Action<float[], long> onCompleted)
     {
         if (colors == null || colors.Count == 0)
         {
-            onCompleted?.Invoke(new uint[0], 0);
+            onCompleted?.Invoke(new float[0], 0);
             return;
         }
 
@@ -58,10 +58,17 @@ public class ColorCounter : MonoBehaviour
         int threadGroupsY = Mathf.CeilToInt(targetTexture.height / 8.0f);
         computeShader.Dispatch(_kernelIndex, threadGroupsX, threadGroupsY, 1);
 
-        uint[] result = new uint[colorCount];
-        _resultBuffer.GetData(result);
+        uint[] pixelCounts = new uint[colorCount];
+        _resultBuffer.GetData(pixelCounts);
+
+        float[] ratios = new float[colorCount];
+        int totalPixels = targetTexture.width * targetTexture.height;
+        for (int i = 0; i < colorCount; i++)
+        {
+            ratios[i] = totalPixels > 0 ? (float)pixelCounts[i] / totalPixels : 0f;
+        }
 
         sw.Stop();
-        onCompleted?.Invoke(result, sw.ElapsedMilliseconds);
+        onCompleted?.Invoke(ratios, sw.ElapsedMilliseconds);
     }
 }
