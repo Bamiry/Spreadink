@@ -43,8 +43,7 @@ public class GameManager : MonoBehaviour
     #region 状態変数
     private CompositeMotionHandle handle;
     private PalatteInk currentPalatteInk;
-    public static int CurrentStageId = 1;
-    private List<Color> odaiColors = new ();
+    private List<Color> odaiColors = new();
     #endregion
 
     async UniTaskVoid Start()
@@ -66,7 +65,7 @@ public class GameManager : MonoBehaviour
 
     void InitializeGame()
     {
-        CurrentStage = GetStage(CurrentStageId);
+        CurrentStage = GetStage();
         odaiColors = CurrentStage.AvailableColors;
         odaiColors.Add(Color.white);
         CreateOdaiTextViews();
@@ -87,8 +86,9 @@ public class GameManager : MonoBehaviour
         IsGamePaused = false;
     }
 
-    StageInfo GetStage(int id)
+    StageInfo GetStage()
     {
+        int id = StageIDHolder.Instance.StageID;
         if (stagesSO.StageDict.TryGetValue(id, out var stage))
         {
             return stage;
