@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 public class ColorCounter : MonoBehaviour
 {
@@ -21,21 +22,23 @@ public class ColorCounter : MonoBehaviour
         _colorsBuffer?.Release();
     }
 
-    // 色のリストを受け取り、各色のピクセル数を配列で返すように変更
-    public void CountEachColor(RenderTexture targetTexture, List<Color> colors, float tolerance, Action<uint[]> onCompleted)
+    // 色のリストを受け取り、各色のピクセル数と実行時間(ms)を返すように変更
+    public void CountEachColor(RenderTexture targetTexture, List<Color> colors, float tolerance, Action<uint[], long> onCompleted)
     {
         if (colors == null || colors.Count == 0)
         {
-            onCompleted?.Invoke(new uint[0]);
+            onCompleted?.Invoke(new uint[0], 0);
             return;
         }
 
         int colorCount = colors.Count;
 
+        var sw = Stopwatch.StartNew();
+
         // 1. 色リスト用のバッファを準備
         _colorsBuffer?.Release();
         _colorsBuffer = new ComputeBuffer(colorCount, sizeof(float) * 4); // float4
-        // ColorからVector4の配列に変換してバッファにセット
+                                                                          // ColorからVector4の配列に変換してバッファにセット
         _colorsBuffer.SetData(colors.Select(c => (Vector4)c).ToArray());
 
         // 2. 結果格納用のバッファを準備（サイズを色の数に合わせる）
@@ -58,6 +61,7 @@ public class ColorCounter : MonoBehaviour
         uint[] result = new uint[colorCount];
         _resultBuffer.GetData(result);
 
-        onCompleted?.Invoke(result);
+        sw.Stop();
+        onCompleted?.Invoke(result, sw.ElapsedMilliseconds);
     }
 }

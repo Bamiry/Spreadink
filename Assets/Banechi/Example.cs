@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections.Generic;
 
 public class Example : MonoBehaviour
 {
     public ColorCounter colorCounter;
     public RenderTexture targetRenderTexture;
-    public Text resultText;
+    public TextMeshProUGUI resultText;
 
     [Header("カウントする色のリスト")]
     public List<Color> targetColors = new List<Color>();
@@ -19,8 +20,6 @@ public class Example : MonoBehaviour
     {
         // 事前にリストに色を追加しておく
         targetColors.Add(Color.white); // 0番目
-        targetColors.Add(Color.red);   // 1番目
-        targetColors.Add(Color.blue);  // 2番目
     }
 
     void Update()
@@ -32,26 +31,34 @@ public class Example : MonoBehaviour
         }
     }
 
-    // uintの配列を受け取るように変更
-    private void OnCountCompleted(uint[] counts)
+    public void CountButtonPressed()
+    {
+        colorCounter.CountEachColor(targetRenderTexture, targetColors, tolerance, OnCountCompleted);
+    }
+
+    // uintの配列と実行時間(ms)を受け取るように変更
+    private void OnCountCompleted(uint[] counts, long elapsedMs)
     {
         if (counts.Length != targetColors.Count) return;
-
-        Debug.Log("--- 各色のピクセル数 ---");
 
         string resultLog = "";
 
         for (int i = 0; i < counts.Length; i++)
         {
-            // どの色が何ピクセルあったかを表示
-            string log = $"Color[{i}] ({targetColors[i]}): {counts[i]} pixels";
-            Debug.Log(log);
+            float ratio = counts[i] / (float)targetRenderTexture.width / (float)targetRenderTexture.height;
+            string log = $"Color[{i}] ({targetColors[i]}): {counts[i]} pixels ({ratio:P1})";
             resultLog += log + "\n";
         }
+
+        resultLog += $"\ntime: {elapsedMs} ms";
 
         if (resultText != null)
         {
             resultText.text = resultLog;
+        }
+        else
+        {
+            Debug.LogWarning("resultTextが設定されていません。");
         }
     }
 }
