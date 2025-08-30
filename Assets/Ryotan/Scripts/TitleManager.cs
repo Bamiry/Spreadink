@@ -7,12 +7,12 @@ using LitMotion.Extensions;
 
 public class TitleManager : MonoBehaviour
 {
-    [Header("タイトル画面")] [SerializeField] private GameObject _titleCanvas;
+    [Header("タイトル画面")][SerializeField] private GameObject _titleCanvas;
 
     [SerializeField] private CanvasGroup _titleCanvasGroup;
     [SerializeField] private List<GameObject> _inkList;
 
-    [Header("レベル選択画面")] [SerializeField] private GameObject _levelSelectCanvas;
+    [Header("レベル選択画面")][SerializeField] private GameObject _levelSelectCanvas;
 
     // Start is called before the first frame update
     void Start()
@@ -47,9 +47,12 @@ public class TitleManager : MonoBehaviour
         _levelSelectCanvas.SetActive(true);
     }
 
-    private UniTaskVoid TransitionToInGame(int levelId)
+    private async UniTaskVoid TransitionToInGame(int levelId)
     {
-        SceneManager.LoadScene("InGame");
-        return new UniTaskVoid();
+        StageIDHolder.Instance.SetStageID(levelId);
+        await SceneManager.LoadSceneAsync("InGame", LoadSceneMode.Additive);
+        await SceneManager.UnloadSceneAsync("Title");
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("InGame"));
+
     }
 }
