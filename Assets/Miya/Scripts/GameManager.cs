@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     [Header("ステージ設定")]
     [SerializeField] private StagesScriptableObject stagesSO;
     [SerializeField] private Image stageImage;
+    [SerializeField] private Image renderStageImage; 
     [SerializeField] private TouchDetector touchDetector;
 
     [Header("ヘッダー設定")]
@@ -55,11 +56,6 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown("space"))
-        {
-            handle.Cancel();
-        }
-
         if (!IsGamePaused)
             colorCounter.CountEachColor(renderTexture, odaiColors, OnCountCompleted);
     }
@@ -115,6 +111,7 @@ public class GameManager : MonoBehaviour
         if (CurrentStage == null) return;
 
         stageImage.sprite = CurrentStage.Image;
+        renderStageImage.sprite = CurrentStage.Image;
     }
 
     void CreatePalatte()
