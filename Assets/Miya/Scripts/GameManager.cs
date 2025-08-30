@@ -21,49 +21,91 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject palattePrefab;
 
     [Header("ステージ設定")]
+    [SerializeField] private StagesScriptableObject stagesSO;
     [SerializeField] private Image stageImage;
     [SerializeField] private TouchDetector touchDetector;
+    [SerializeField] private int defaultStageId = 1;
 
     [Header("ヘッダー設定")]
     [SerializeField] private Button hamburgerBtn;
+    [SerializeField] private Transform odaiTextViews;
+    [SerializeField] private GameObject odaiTextViewPrefab;
     #endregion
 
     #region プロパティ
     public bool IsGamePaused { get; private set; } = true;
+    public StageInfo CurrentStage { get; private set; } = null;
     #endregion
 
     #region 状態変数
     private CompositeMotionHandle handle;
     private PalatteInk currentPalatteInk;
+    public static int CurrentStageId;
     #endregion
 
     async UniTaskVoid Start()
     {
+        CurrentStageId = defaultStageId;
+
         await UniTask.DelayFrame(1);
         InitializeGame();
     }
 
     void InitializeGame()
     {
-        IsGamePaused = false;
-
+        CurrentStage = GetStage(CurrentStageId);
+        CreateOdaiTextViews();
+        CreateStage();
         CreatePalatte();
 
         handle = new CompositeMotionHandle();
         touchDetector.OnTouch += (pos) => DropInk(pos);
+
+        IsGamePaused = false;
+    }
+
+    StageInfo GetStage(int id)
+    {
+        if (stagesSO.StageDict.TryGetValue(id, out var stage))
+        {
+            return stage;
+        }
+        else
+        {
+            Debug.LogError($"Stage ID {id} not found.");
+            return null;
+        }
+    }
+
+    void CreateOdaiTextViews()
+    {
+        foreach (var (colorType, ratio) in CurrentStage.Odai)
+        {
+            var color = InkColorUtil.GetColor(colorType);
+            var odaiTextView = Instantiate(odaiTextViewPrefab, odaiTextViews).GetComponent<OdaiTextView>();
+            odaiTextView.Set(color, ratio);
+        }
+    }
+
+    void CreateStage()
+    {
+        if (CurrentStage == null) return;
+
+        stageImage.sprite = CurrentStage.Image;
     }
 
     void CreatePalatte()
     {
-        for (int i = 0; i < 4; i++)
+        foreach (var color in CurrentStage.AvailableColors)
         {
             var palatteInk = Instantiate(palattePrefab, palatte).GetComponent<PalatteInk>();
             palatteInk.OnTouch += (palatteInk) =>
             {
+                currentPalatteInk?.TurnSelected();
                 if (!palatteInk.IsUsed)
                     currentPalatteInk = palatteInk;
             };
-            palatteInk.Set(Color.HSVToRGB(i / 4f, 1f, 1f));
+            palatteInk.Set(color);
         }
     }
 
@@ -89,7 +131,7 @@ public class GameManager : MonoBehaviour
         image.color = currentPalatteInk.Color;
 
         // 広げる
-        LMotion.Create(inkDefaultScale * Vector2.one, Vector2.one, durationToMaxScale)
+        LMotion.Create(inkDefaultScale * Vector2.one, Vector2.one, durationToMaxScale * CurrentStage.SpreadSpeedRate)
             .BindToLocalScaleXY(ink.transform)
             .AddTo(handle);
 
