@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class TouchDetector : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
@@ -10,6 +11,11 @@ public class TouchDetector : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 
     // PointerUp
     public event System.Action<Vector2> OnTap;
+
+    void Awake()
+    {
+        GetComponent<Image>().alphaHitTestMinimumThreshold = 1f;
+    }
 
     public void OnPointerDown(PointerEventData eventData)
     {
