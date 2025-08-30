@@ -11,6 +11,8 @@ public class TitleManager : MonoBehaviour
 
     [SerializeField] private CanvasGroup _titleCanvasGroup;
     [SerializeField] private List<GameObject> _inkList;
+    [SerializeField] private GameObject _hamburgerMenu;
+    [SerializeField] private GameObject _hamburgerButton;
 
     [Header("レベル選択画面")][SerializeField] private GameObject _levelSelectCanvas;
 
@@ -18,6 +20,7 @@ public class TitleManager : MonoBehaviour
     void Start()
     {
         _titleCanvas.SetActive(true);
+        _hamburgerMenu.SetActive(false);
         _levelSelectCanvas.SetActive(false);
         // TODO: BGM再生
     }
@@ -30,6 +33,25 @@ public class TitleManager : MonoBehaviour
     public void OnPressLevelButton(int levelId)
     {
         TransitionToInGame(levelId).Forget();
+    }
+
+    public void OnPressHamburgerButton()
+    {
+        _hamburgerMenu.SetActive(!_hamburgerMenu.activeSelf);
+        _hamburgerButton.SetActive(!_hamburgerMenu.activeSelf);
+    }
+
+    public void OnPressCloseHamburgerButton()
+    {
+        _hamburgerMenu.SetActive(false);
+        _hamburgerButton.SetActive(true);
+    }
+
+    public void OnPressReturnToTitleButton()
+    {
+        _hamburgerMenu.SetActive(false);
+        _levelSelectCanvas.SetActive(false);
+        _titleCanvas.SetActive(true);
     }
 
     private async UniTaskVoid TransitionToLevelSelect()
