@@ -35,7 +35,7 @@ public static class InkColorUtil
         : new Color(161, 0, 255);
 
     public static readonly Color SkyBlue = new Color(0, 255, 255);
-    
+
     public static readonly Color Pink = ColorUtility.TryParseHtmlString("#FF00DD", out var pink)
         ? pink
         : new Color(255, 0, 221);
