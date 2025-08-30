@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Banechi/AreaCalculationTest.unity
+    path: Assets/Banechi/Sceanes/AreaCalculationTest.unity
     guid: c4940192a22d99943acc36130bb84d3f
   m_configObjects: {}
