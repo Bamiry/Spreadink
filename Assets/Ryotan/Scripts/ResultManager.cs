@@ -6,11 +6,17 @@ using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ResultManager : MonoBehaviour
 {
     [Header("UI")] [SerializeField] private GameObject _resultCanvas;
     [SerializeField] private TextMeshProUGUI _scoreText;
+    [SerializeField] private GameObject _barPlotOdai;
+    [SerializeField] private GameObject _barPlotPlayer;
+    [SerializeField] private GameObject _barPlotPrefab;
+    
+    [SerializeField] private TextMeshProUGUI _scoreDebugText;
 
     private void Start()
     {
@@ -28,6 +34,10 @@ public class ResultManager : MonoBehaviour
         }
 
         var score = CalculateScore(colorCounts);
+        
+        // 棒グラフを用意
+        CreateBarPlot(_barPlotOdai, stageInfo.Odai);
+        CreateBarPlot(_barPlotPlayer, colorCounts.ToDictionary(x => x.Key, x => x.Value.Item2));
 
         // アニメーションつきで表示
         _scoreText.text = $"{score} %";
@@ -58,7 +68,7 @@ public class ResultManager : MonoBehaviour
     /// </summary>
     /// <param name="colorCounts">色, (お題の割合, プレイヤーの割合)</param>
     /// <returns></returns>
-    private static int CalculateScore(Dictionary<ColorType, (float, float)> colorCounts)
+    private int CalculateScore(Dictionary<ColorType, (float, float)> colorCounts)
     {
         int score = 100; // スコアは簡単のためintとする（仕様）
         var log = new StringBuilder("Score Calculation:\n");
@@ -71,11 +81,37 @@ public class ResultManager : MonoBehaviour
             var diffRatio = Mathf.Abs(odaiRatio - playerRatio);
             var diffPercent = (int)(diffRatio * 100f); // パーセントに変換し，intに丸める
             score -= diffPercent;
-            log.Append($"色：{colorCount.Key}, お題の割合: {odaiRatio:P1}, プレイヤーの割合: {playerRatio:P1}, 差分: {diffRatio:P1}, 減点: {diffPercent}\n");
+            log.Append($"色：{colorCount.Key}, お題: {odaiRatio:P1}, プレイヤー: {playerRatio:P1}, 差分: {diffRatio:P1}, 減点: {diffPercent}\n");
         }
         
         Debug.Log(log.ToString());
+        _scoreDebugText.text = log.ToString();
 
+        score = Mathf.Clamp(score, 0, 100);
         return score;
+    }
+    
+    private void CreateBarPlot(GameObject parent, Dictionary<ColorType, float> colorCounts)
+    {
+        var currentRatio = 0f;
+        foreach (var (colorType, ratio) in colorCounts)
+        {
+            var barPlot = Instantiate(_barPlotPrefab, parent.transform);
+            
+            // サイズと位置を調整
+            // TODO: 上手く設定できていない
+            var rectTransform = barPlot.GetComponent<RectTransform>();
+            var currentSize = rectTransform.sizeDelta;
+            rectTransform.sizeDelta = new Vector2(currentSize.x * ratio, currentSize.y);
+            var currentPosition = rectTransform.anchoredPosition;
+            rectTransform.anchoredPosition = 
+                new Vector2(currentPosition.x + currentSize.x * currentRatio, currentPosition.y);
+
+            // 色を設定
+            var image = barPlot.GetComponent<Image>();
+            image.color = InkColorUtil.GetColor(colorType);
+            
+            currentRatio += ratio;
+        }
     }
 }
