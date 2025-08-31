@@ -3,6 +3,8 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using LitMotion;
+using LitMotion.Extensions;
+using UnityEngine.UI;
 
 public class TitleManager : MonoBehaviour
 {
@@ -13,7 +15,9 @@ public class TitleManager : MonoBehaviour
     [SerializeField] private GameObject _hamburgerMenu;
     [SerializeField] private GameObject _hamburgerButton;
 
-    [Header("レベル選択画面")][SerializeField] private GameObject _levelSelectCanvas;
+    [Header("レベル選択画面")]
+    [SerializeField] private GameObject _levelSelectCanvas;
+    [SerializeField] private Button[] levelButtons;
 
     // Start is called before the first frame update
     void Start()
@@ -21,7 +25,17 @@ public class TitleManager : MonoBehaviour
         _titleCanvas.SetActive(true);
         _hamburgerMenu.SetActive(false);
         _levelSelectCanvas.SetActive(false);
-        // TODO: BGM再生
+
+        for (int i=0; i<levelButtons.Length; i++)
+        {
+            int levelId = i; // クロージャ対策
+            Debug.Log(levelButtons[i].gameObject);
+            levelButtons[i].onClick.AddListener(
+                () =>
+                {
+                    OnPressLevelButton(levelId + 1, levelButtons[levelId].gameObject);
+                });
+        }
     }
 
     public void OnPressStartButton()
@@ -29,9 +43,9 @@ public class TitleManager : MonoBehaviour
         TransitionToLevelSelect().Forget();
     }
 
-    public void OnPressLevelButton(int levelId)
+    public void OnPressLevelButton(int levelId, GameObject button)
     {
-        TransitionToInGame(levelId).Forget();
+        TransitionToInGame(levelId, button).Forget();
     }
 
     public void OnPressHamburgerButton()
@@ -70,10 +84,10 @@ public class TitleManager : MonoBehaviour
         _levelSelectCanvas.SetActive(true);
     }
 
-    private async UniTaskVoid TransitionToInGame(int levelId)
+    private async UniTaskVoid TransitionToInGame(int levelId, GameObject button)
     {
         StageIDHolder.Instance.SetStageID(levelId);
-        await TransitionManager.Instance.Invisible(0.5f, Color.black);
+        await TransitionManager.Instance.Invisible(0.5f, button.GetComponent<Image>().color);
         await SceneManager.LoadSceneAsync("InGame", LoadSceneMode.Additive);
         await SceneManager.UnloadSceneAsync("Title");
         SceneManager.SetActiveScene(SceneManager.GetSceneByName("InGame"));
