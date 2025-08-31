@@ -3,7 +3,6 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using LitMotion;
-using LitMotion.Extensions;
 
 public class TitleManager : MonoBehaviour
 {
@@ -74,9 +73,11 @@ public class TitleManager : MonoBehaviour
     private async UniTaskVoid TransitionToInGame(int levelId)
     {
         StageIDHolder.Instance.SetStageID(levelId);
+        await TransitionManager.Instance.Invisible(0.5f, Color.black);
         await SceneManager.LoadSceneAsync("InGame", LoadSceneMode.Additive);
         await SceneManager.UnloadSceneAsync("Title");
         SceneManager.SetActiveScene(SceneManager.GetSceneByName("InGame"));
+        await TransitionManager.Instance.Visible(0.5f);
 
     }
 }
