@@ -57,6 +57,7 @@ public class TitleManager : MonoBehaviour
 
     private async UniTaskVoid TransitionToLevelSelect()
     {
+        await UniTask.DelayFrame(1);
         // なんか関数呼ばれてからアニメーション始まるまでタイムラグがある
         // LMotion.Create(1f, 0f, 0.5f).WithEase(Ease.InQuint).BindToAlpha(_titleCanvasGroup);
         // foreach (var ink in _inkList)
