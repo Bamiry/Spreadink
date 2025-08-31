@@ -15,13 +15,24 @@ public class TitleManager : MonoBehaviour
     [SerializeField] private GameObject _hamburgerButton;
 
     [Header("レベル選択画面")][SerializeField] private GameObject _levelSelectCanvas;
+    
+    public static bool PleaseOpenLevelSelect { get; set; } = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        _titleCanvas.SetActive(true);
+        if (PleaseOpenLevelSelect)
+        {
+            PleaseOpenLevelSelect = false;
+            _titleCanvas.SetActive(false);
+            _levelSelectCanvas.SetActive(true);
+        }
+        else
+        {
+            _titleCanvas.SetActive(true);
+            _levelSelectCanvas.SetActive(false);
+        }
         _hamburgerMenu.SetActive(false);
-        _levelSelectCanvas.SetActive(false);
         // TODO: BGM再生
     }
 
