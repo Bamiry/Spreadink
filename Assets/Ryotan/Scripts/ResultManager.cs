@@ -64,6 +64,7 @@ public class ResultManager : MonoBehaviour
 
     public async void OnPressTitleButton()
     {
+        TitleManager.PleaseOpenLevelSelect = true;
         await SceneManager.LoadSceneAsync("Title", LoadSceneMode.Additive);
         await SceneManager.UnloadSceneAsync("InGame");
         SceneManager.SetActiveScene(SceneManager.GetSceneByName("Title"));
