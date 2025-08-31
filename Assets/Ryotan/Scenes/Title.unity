@@ -486,7 +486,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u30B9\u30D7\u30EC\u30C3\u30C7\u30A3\u30F3\u30B0"
+  m_text: "\u30B9\u30D7\u30EC\u30C3\u30C7\u30A3\u30F3\u30AF"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 54ee89a186bb4004d928cd9012bcb34b, type: 2}
   m_sharedMaterial: {fileID: 4153113225006693952, guid: 54ee89a186bb4004d928cd9012bcb34b, type: 2}
@@ -1236,12 +1236,44 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7281946701584312033, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7281946701584312033, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7281946701584312033, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 444614638}
+      objectReference: {fileID: 409925153}
+    - target: {fileID: 7281946701584312033, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 284153113}
+    - target: {fileID: 7281946701584312033, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7281946701584312033, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnPressCloseHamburgerButton
+      value: SetActive
+      objectReference: {fileID: 0}
+    - target: {fileID: 7281946701584312033, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SetActive
+      objectReference: {fileID: 0}
+    - target: {fileID: 7281946701584312033, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: UnityEngine.GameObject, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 7281946701584312033, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7281946701584312033, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 9106618950705966427, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
       propertyPath: m_AnchorMax.y
@@ -2834,7 +2866,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u30B9\u30D7\u30EC\u30C3\u30C7\u30A3\u30F3\u30B0"
+  m_text: "\u30B9\u30D7\u30EC\u30C3\u30C7\u30A3\u30F3\u30AF"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 54ee89a186bb4004d928cd9012bcb34b, type: 2}
   m_sharedMaterial: {fileID: 4153113225006693952, guid: 54ee89a186bb4004d928cd9012bcb34b, type: 2}
