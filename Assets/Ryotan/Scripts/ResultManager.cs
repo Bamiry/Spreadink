@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Cysharp.Threading.Tasks;
+using LitMotion;
+using LitMotion.Extensions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -36,12 +38,16 @@ public class ResultManager : MonoBehaviour
         var score = CalculateScore(colorCounts);
 
         // 棒グラフを用意
-        CreateBarPlot(_barPlotOdai, stageInfo.Odai);
-        CreateBarPlot(_barPlotPlayer, colorCounts.ToDictionary(x => x.Key, x => x.Value.Item2));
+        CreateBarPlot(_barPlotOdai, stageInfo.Odai.ToDictionary(x => x.Key, x => x.Value / 100f),
+            TextPositionType.Top);
+        CreateBarPlot(_barPlotPlayer, colorCounts.ToDictionary(
+                x => x.Key,
+                x => x.Value.Item2 / colorCounts.Values.Sum(pair => pair.Item2)),
+            TextPositionType.Bottom); // プレイヤーの割合を正規化);
 
         // アニメーションつきで表示
         _scoreText.text = $"{score} 点";
-        _resultCanvas.SetActive(true);
+        ShowResult().Forget();
     }
 
     public async void OnPressRetryButton()
@@ -108,7 +114,8 @@ public class ResultManager : MonoBehaviour
         return intScore;
     }
 
-    private void CreateBarPlot(GameObject parent, Dictionary<ColorType, float> colorCounts)
+    private void CreateBarPlot(GameObject parent, Dictionary<ColorType, float> colorCounts,
+        TextPositionType textPositionType)
     {
         var currentRatio = 0f;
         foreach (var (colorType, ratio) in colorCounts)
@@ -116,7 +123,6 @@ public class ResultManager : MonoBehaviour
             var barPlot = Instantiate(_barPlotPrefab, parent.transform);
 
             // サイズと位置を調整
-            // TODO: 上手く設定できていない
             var rectTransform = barPlot.GetComponent<RectTransform>();
             var currentSize = rectTransform.sizeDelta;
             rectTransform.sizeDelta = new Vector2(currentSize.x * ratio, currentSize.y);
@@ -128,7 +134,32 @@ public class ResultManager : MonoBehaviour
             var image = barPlot.GetComponent<Image>();
             image.color = InkColorUtil.GetColor(colorType);
 
+            // パーセント表示テキストを設定
+            var barPlotComponent = barPlot.GetComponent<BarPlotComponent>();
+            barPlotComponent.PercentageText.text = $"{Mathf.Round(ratio * 100f)}%";
+            barPlotComponent.TextPosition = textPositionType;
+
             currentRatio += ratio;
         }
+    }
+
+    private async UniTask ShowResult()
+    {
+        // 準備
+        _resultCanvas.SetActive(true);
+        _scoreText.gameObject.SetActive(false);
+        
+        // 棒グラフを表示
+        await LMotion.Create(0f, 1300f, 1.0f)
+            .WithEase(Ease.OutCubic)
+            .BindToSizeDeltaX(_barPlotPlayer.GetComponent<RectTransform>());
+        
+        // 棒グラフのパーセントテキストを表示
+        
+        // スコアを表示
+        _scoreText.gameObject.SetActive(true);
+        
+        // ボタン類を表示
+        
     }
 }
