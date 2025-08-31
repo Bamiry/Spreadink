@@ -2,31 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ResultManager : MonoBehaviour
 {
     [Header("UI")] [SerializeField] private GameObject _resultCanvas;
     [SerializeField] private TextMeshProUGUI _scoreText;
-
-    private ResultManager()
-    {
-    }
-
-    public static ResultManager Instance;
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
     private void Start()
     {
@@ -49,10 +33,12 @@ public class ResultManager : MonoBehaviour
         _scoreText.text = $"{score} %";
         _resultCanvas.SetActive(true);
     }
-    
-    public void OnPressRetryButton()
+
+    public async void OnPressRetryButton()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("InGame");
+        await SceneManager.LoadSceneAsync("InGame", LoadSceneMode.Additive);
+        await SceneManager.UnloadSceneAsync("InGame");
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("InGame"));
     }
 
     public void OnPressScreenShotButton()
@@ -60,9 +46,11 @@ public class ResultManager : MonoBehaviour
         Debug.Log("スクリーンショットボタンが押されました");
     }
 
-    public void OnPressTitleButton()
+    public async void OnPressTitleButton()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Title");
+        await SceneManager.LoadSceneAsync("Title", LoadSceneMode.Additive);
+        await SceneManager.UnloadSceneAsync("InGame");
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("Title"));
     }
 
     /// <summary>
