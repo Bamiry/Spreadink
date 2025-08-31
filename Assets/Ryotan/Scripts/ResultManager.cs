@@ -46,7 +46,7 @@ public class ResultManager : MonoBehaviour
             TextPositionType.Bottom); // プレイヤーの割合を正規化);
 
         // アニメーションつきで表示
-        _scoreText.text = $"{score} 点";
+        _scoreText.text = $"{score}点";
         ShowResult().Forget();
     }
 
@@ -148,18 +148,20 @@ public class ResultManager : MonoBehaviour
         // 準備
         _resultCanvas.SetActive(true);
         _scoreText.gameObject.SetActive(false);
+        var barPlotPlayerRect = _barPlotPlayer.GetComponent<RectTransform>();
+        barPlotPlayerRect.sizeDelta = new Vector2(0f, barPlotPlayerRect.sizeDelta.y);
+        await UniTask.WaitForSeconds(0.5f);
         
         // 棒グラフを表示
         await LMotion.Create(0f, 1300f, 1.0f)
             .WithEase(Ease.OutCubic)
-            .BindToSizeDeltaX(_barPlotPlayer.GetComponent<RectTransform>());
+            .BindToSizeDeltaX(barPlotPlayerRect);
         
         // 棒グラフのパーセントテキストを表示
+        barPlotPlayerRect.sizeDelta = new Vector2(barPlotPlayerRect.sizeDelta.x, 720f);
+        await UniTask.WaitForSeconds(1.0f);
         
         // スコアを表示
         _scoreText.gameObject.SetActive(true);
-        
-        // ボタン類を表示
-        
     }
 }
