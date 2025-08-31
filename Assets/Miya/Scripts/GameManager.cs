@@ -34,6 +34,9 @@ public class GameManager : MonoBehaviour
     [Header("面積計算")]
     [SerializeField] private ColorCounter colorCounter;
     [SerializeField] private RenderTexture renderTexture;
+
+    [Header("リザルト設定")]
+    [SerializeField] private ResultManager resultManager;
     #endregion
 
     #region プロパティ
@@ -189,11 +192,11 @@ public class GameManager : MonoBehaviour
 
     void OnCountCompleted(float[] ratios, long elapsedMs)
     {
-        Debug.Log($"Count completed in {elapsedMs} ms. Ratios: {string.Join(", ", ratios)}");
+        // Debug.Log($"Count completed in {elapsedMs} ms. Ratios: {string.Join(", ", ratios)}");
         if (ratios[^1] <= 0)
         {
             StopInkSpreading();
-            ResultManager.Instance.StartResult(CurrentStage, ratios);
+            resultManager.StartResult(CurrentStage, ratios);
         }
     }
 }
