@@ -73,10 +73,12 @@ public class ResultManager : MonoBehaviour
     private static int CalculateScore(Dictionary<ColorType, (float, float)> colorCounts)
     {
         int score = 100; // スコアは簡単のためintとする（仕様）
-        StringBuilder log = new StringBuilder("Score Calculation:\n");
+        var log = new StringBuilder("Score Calculation:\n");
+        var sumPlayerRatio = colorCounts.Values.Sum(x => x.Item2);
         foreach (var colorCount in colorCounts)
         {
-            var (odaiPercent, playerRatio) = colorCount.Value;
+            var (odaiPercent, playerRatioRaw) = colorCount.Value;
+            var playerRatio = playerRatioRaw / sumPlayerRatio; // プレイヤーの割合を正規化
             var odaiRatio = odaiPercent / 100f;
             var diffRatio = Mathf.Abs(odaiRatio - playerRatio);
             var diffPercent = (int)(diffRatio * 100f); // パーセントに変換し，intに丸める
