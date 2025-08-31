@@ -169,7 +169,7 @@ MonoBehaviour:
   _resultCanvas: {fileID: 681439009}
   _scoreText: {fileID: 1456184202}
   _barPlotOdai: {fileID: 1684147145}
-  _barPlotPlayer: {fileID: 360934487}
+  _barPlotPlayer: {fileID: 1243722801404836401}
   _barPlotPrefab: {fileID: 8321809320542961441, guid: d9920c0d4b8ae4f4b83b734487a56efb, type: 3}
   _scoreDebugText: {fileID: 445568900}
 --- !u!1 &139772405
@@ -530,11 +530,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!1 &360934487 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7958556840933179525, guid: 8bd8539c23c606845aa4a87bc722f31a, type: 3}
-  m_PrefabInstance: {fileID: 1243722801404836400}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &410854923
 GameObject:
   m_ObjectHideFlags: 0
@@ -2464,6 +2459,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8bd8539c23c606845aa4a87bc722f31a, type: 3}
+--- !u!1 &1243722801404836401 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2636541347531018286, guid: 8bd8539c23c606845aa4a87bc722f31a, type: 3}
+  m_PrefabInstance: {fileID: 1243722801404836400}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
