@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
     [Header("ステージ設定")]
     [SerializeField] private StagesScriptableObject stagesSO;
     [SerializeField] private Image stageImage;
-    [SerializeField] private Image renderStageImage; 
+    [SerializeField] private Image renderStageImage;
     [SerializeField] private TouchDetector touchDetector;
 
     [Header("ヘッダー設定")]
@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
     async UniTaskVoid Start()
     {
         await UniTask.WaitUntil(() => ManagerSceneAutoLoader.IsManagerSceneLoaded);
-        await UniTask.DelayFrame(1);
+        await UniTask.DelayFrame(2);
         InitializeGame();
     }
 
