@@ -986,7 +986,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1914020160562899895, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3541143325970381437, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
       propertyPath: m_Pivot.x
@@ -1070,7 +1070,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4896403035968185866, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7281946701584312033, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -1114,7 +1114,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9106618950705966427, guid: c70d2b567ace5b4418dfa99f59b70cf2, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2877,6 +2877,10 @@ PrefabInstance:
     - target: {fileID: 4034417317586779749, guid: 8bd8539c23c606845aa4a87bc722f31a, type: 3}
       propertyPath: m_Name
       value: Result Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034417317586779749, guid: 8bd8539c23c606845aa4a87bc722f31a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6272577018001081147, guid: 8bd8539c23c606845aa4a87bc722f31a, type: 3}
       propertyPath: m_Pivot.x

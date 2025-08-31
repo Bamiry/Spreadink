@@ -18,14 +18,25 @@ public class TitleManager : MonoBehaviour
     [Header("レベル選択画面")]
     [SerializeField] private GameObject _levelSelectCanvas;
     [SerializeField] private Button[] levelButtons;
+    
+    public static bool PleaseOpenLevelSelect { get; set; } = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        _titleCanvas.SetActive(true);
+        if (PleaseOpenLevelSelect)
+        {
+            PleaseOpenLevelSelect = false;
+            _titleCanvas.SetActive(false);
+            _levelSelectCanvas.SetActive(true);
+        }
+        else
+        {
+            _titleCanvas.SetActive(true);
+            _levelSelectCanvas.SetActive(false);
+        }
         _hamburgerMenu.SetActive(false);
         _levelSelectCanvas.SetActive(false);
-
         for (int i=0; i<levelButtons.Length; i++)
         {
             int levelId = i; // クロージャ対策
