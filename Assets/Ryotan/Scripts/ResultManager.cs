@@ -149,13 +149,16 @@ public class ResultManager : MonoBehaviour
         _resultCanvas.SetActive(true);
         _scoreText.gameObject.SetActive(false);
         var barPlotPlayerRect = _barPlotPlayer.GetComponent<RectTransform>();
-        barPlotPlayerRect.sizeDelta = new Vector2(0f, barPlotPlayerRect.sizeDelta.y);
         await UniTask.WaitForSeconds(0.5f);
         
         // 棒グラフを表示
-        await LMotion.Create(0f, 1300f, 1.0f)
+        // await LMotion.Create(0f, 1300f, 1.0f)
+        //     .WithEase(Ease.OutCubic)
+        //     .BindToSizeDeltaX(barPlotPlayerRect);
+        var mask = _barPlotPlayer.GetComponent<RectMask2D>();
+        await LMotion.Create(new Vector4(0f, 0f, 1300f, 0f), new Vector4(0f, 0f, 0f, 0f), 1.0f)
             .WithEase(Ease.OutCubic)
-            .BindToSizeDeltaX(barPlotPlayerRect);
+            .Bind(x=> mask.padding = x);
         
         // 棒グラフのパーセントテキストを表示
         barPlotPlayerRect.sizeDelta = new Vector2(barPlotPlayerRect.sizeDelta.x, 720f);
