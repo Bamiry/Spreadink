@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
@@ -28,6 +27,8 @@ public class GameManager : MonoBehaviour
 
     [Header("ヘッダー設定")]
     [SerializeField] private Button hamburgerBtn;
+    [SerializeField] private GameObject menu;
+    [SerializeField] private Button closeMenuBtn;
     [SerializeField] private Transform odaiTextViews;
     [SerializeField] private GameObject odaiTextViewPrefab;
 
@@ -65,6 +66,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        handle?.Cancel();
+    }
+
     void InitializeGame()
     {
         CurrentStage = GetStage();
@@ -79,11 +85,23 @@ public class GameManager : MonoBehaviour
 
         hamburgerBtn.onClick.AddListener(() =>
         {
-            if (IsGamePaused)
-                ResumeInkSpreading();
-            else
+            if (!IsGamePaused)
+            {
                 PauseInkSpreading();
+                menu.SetActive(true);
+            }
         });
+
+        closeMenuBtn.onClick.AddListener(() =>
+        {
+            if (IsGamePaused)
+            {
+                ResumeInkSpreading();
+                menu.SetActive(false);
+            }
+        });
+
+        menu.SetActive(false);
 
         IsGamePaused = false;
     }
