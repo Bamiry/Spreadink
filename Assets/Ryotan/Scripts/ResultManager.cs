@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 public class ResultManager : MonoBehaviour
 {
-    [Header("UI")] [SerializeField] private GameObject _resultCanvas;
+    [Header("UI")][SerializeField] private GameObject _resultCanvas;
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private GameObject _barPlotOdai;
     [SerializeField] private GameObject _barPlotPlayer;
@@ -46,7 +46,7 @@ public class ResultManager : MonoBehaviour
             TextPositionType.Bottom); // プレイヤーの割合を正規化);
 
         // アニメーションつきで表示
-        _scoreText.text = $"{score}点";
+        _scoreText.text = $"{score} 点";
         ShowResult().Forget();
     }
 
@@ -76,7 +76,7 @@ public class ResultManager : MonoBehaviour
     /// <returns></returns>
     private int CalculateScore(Dictionary<ColorType, (float, float)> colorCounts)
     {
-        int score = 100; // スコアは簡単のためintとする（仕様）
+        float score = 100; // スコアは簡単のためintとする（仕様）
         var log = new StringBuilder("Score Calculation:\n");
         var sumPlayerRatio = colorCounts.Values.Sum(x => x.Item2);
         foreach (var colorCount in colorCounts)
@@ -85,17 +85,33 @@ public class ResultManager : MonoBehaviour
             var playerRatio = playerRatioRaw / sumPlayerRatio; // プレイヤーの割合を正規化
             var odaiRatio = odaiPercent / 100f;
             var diffRatio = Mathf.Abs(odaiRatio - playerRatio);
-            var diffPercent = (int)(diffRatio * 100f); // パーセントに変換し，intに丸める
-            score -= diffPercent;
-            log.Append(
-                $"色：{colorCount.Key}, お題: {odaiRatio:P1}, プレイヤー: {playerRatio:P1}, 差分: {diffRatio:P1}, 減点: {diffPercent}\n");
+            var diffPercent = Mathf.RoundToInt(diffRatio * 100f); // パーセントに変換し，intに丸める
+            Debug.Log(
+                $"色: {colorCount.Key}, 差分: {diffPercent}");
+            if (diffPercent > 10)
+            {
+                Debug.Log($"大幅な差分がありました");
+                score -= (diffPercent - 10) * 2;
+                diffPercent = 10;
+            }
+            if (diffPercent > 5)
+            {
+                Debug.Log($"差分がありました");
+                score -= (diffPercent - 5);
+                diffPercent = 5;
+            }
+            score -= diffPercent * 0.5f;
+            log.Append($"色：{colorCount.Key}, お題: {odaiRatio:P1}, プレイヤー: {playerRatio:P1}, 差分: {diffRatio:P1}, 減点: {diffPercent}\n");
         }
 
         Debug.Log(log.ToString());
         _scoreDebugText.text = log.ToString();
+        Debug.Log($"最終スコア: {score}");
 
         score = Mathf.Clamp(score, 0, 100);
-        return score;
+        Debug.Log($"最終スコア: {score}");
+        int intScore = Mathf.RoundToInt(score);
+        return intScore;
     }
 
     private void CreateBarPlot(GameObject parent, Dictionary<ColorType, float> colorCounts,
