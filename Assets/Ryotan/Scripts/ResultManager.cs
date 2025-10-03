@@ -137,7 +137,9 @@ public class ResultManager : MonoBehaviour
 
             // パーセント表示テキストを設定
             var barPlotComponent = barPlot.GetComponent<BarPlotComponent>();
-            barPlotComponent.PercentageText.text = $"{Mathf.Round(ratio * 100f)}%";
+            barPlotComponent.PercentageText.SetText(
+                ratio <= 0.05f ? string.Empty : "{0}%",
+                Mathf.RoundToInt(ratio * 100f));
             barPlotComponent.TextPosition = textPositionType;
 
             currentRatio += ratio;
