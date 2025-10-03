@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Cysharp.Threading.Tasks;
 using LitMotion;
-using LitMotion.Extensions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,7 +10,7 @@ using UnityEngine.UI;
 
 public class ResultManager : MonoBehaviour
 {
-    [Header("UI")][SerializeField] private GameObject _resultCanvas;
+    [Header("UI")] [SerializeField] private GameObject _resultCanvas;
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private GameObject _barPlotOdai;
     [SerializeField] private GameObject _barPlotPlayer;
@@ -95,14 +93,17 @@ public class ResultManager : MonoBehaviour
                 score -= (diffPercent - 10) * 2;
                 diffPercent = 10;
             }
+
             if (diffPercent > 5)
             {
                 Debug.Log($"差分がありました");
                 score -= (diffPercent - 5);
                 diffPercent = 5;
             }
+
             score -= diffPercent * 0.5f;
-            log.Append($"色：{colorCount.Key}, お題: {odaiRatio:P1}, プレイヤー: {playerRatio:P1}, 差分: {diffRatio:P1}, 減点: {diffPercent}\n");
+            log.Append(
+                $"色：{colorCount.Key}, お題: {odaiRatio:P1}, プレイヤー: {playerRatio:P1}, 差分: {diffRatio:P1}, 減点: {diffPercent}\n");
         }
 
         Debug.Log(log.ToString());
@@ -153,7 +154,7 @@ public class ResultManager : MonoBehaviour
         _scoreText.gameObject.SetActive(false);
         var barPlotPlayerRect = _barPlotPlayer.GetComponent<RectTransform>();
         await UniTask.WaitForSeconds(0.5f);
-        
+
         // 棒グラフを表示
         // await LMotion.Create(0f, 1300f, 1.0f)
         //     .WithEase(Ease.OutCubic)
@@ -161,12 +162,12 @@ public class ResultManager : MonoBehaviour
         var mask = _barPlotPlayer.GetComponent<RectMask2D>();
         await LMotion.Create(new Vector4(0f, 0f, 1300f, 0f), new Vector4(0f, 0f, 0f, 0f), 1.0f)
             .WithEase(Ease.OutCubic)
-            .Bind(x=> mask.padding = x);
-        
+            .Bind(x => mask.padding = x);
+
         // 棒グラフのパーセントテキストを表示
         barPlotPlayerRect.sizeDelta = new Vector2(barPlotPlayerRect.sizeDelta.x, 720f);
         await UniTask.WaitForSeconds(1.0f);
-        
+
         // スコアを表示
         _scoreText.gameObject.SetActive(true);
     }
