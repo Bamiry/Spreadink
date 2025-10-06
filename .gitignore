@@ -82,3 +82,7 @@ Thumbs.db
 
 # Logs
 *.log 
+
+# Unity6 Android Build Temp Files
+# Reference: https://baba-s.hatenablog.com/entry/2025/03/02/091948
+.utmp/
