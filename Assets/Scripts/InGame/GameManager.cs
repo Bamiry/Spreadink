@@ -168,11 +168,14 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Current screen size: {screenSize.x}x{screenSize.y}");
         var aspectRatio = screenSize.x / screenSize.y;
         Debug.Log($"Current aspect ratio: {aspectRatio}");
-        var adjustRatio = 1612 / screenSize.x; // 1612は想定している画面幅;
+        var adjustRatio = screenSize.x / 1612f; // 1612は想定している画面幅;
+        var margin = (screenSize.y - (720 * adjustRatio)) / 2; // 720はヘッダー＋Stage高さ
+        Debug.Log($"adjustRatio:{adjustRatio} ,Header size:{120 * adjustRatio}, stage size:{600 * adjustRatio},Margin size:{margin}");
 
         // 生成
         var ink = Instantiate(inkPrefab, inks);
-        ink.transform.position = calcCamera.ScreenToWorldPoint(new Vector3(position.x * adjustRatio, position.y * adjustRatio, 10f));
+        // 横幅はRatioで倍率調整、縦幅はヘッダー分引いて倍率調整
+        ink.transform.position = calcCamera.ScreenToWorldPoint(new Vector3(position.x / adjustRatio, (position.y - margin) / adjustRatio, 10f));
 
         // 色設定
         var image = ink.GetComponent<Image>();
