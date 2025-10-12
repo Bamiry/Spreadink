@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using UnityEngine.Rendering;
 
 public class ColorCounter : MonoBehaviour
 {
@@ -59,17 +60,35 @@ public class ColorCounter : MonoBehaviour
         int threadGroupsY = Mathf.CeilToInt(targetTexture.height / 8.0f);
         computeShader.Dispatch(_kernelIndex, threadGroupsX, threadGroupsY, 1);
 
-        uint[] pixelCounts = new uint[colorCount];
-        _resultBuffer.GetData(pixelCounts);
+        // --- 5. 非同期でGPUデータ読み出し ---
+        AsyncGPUReadback.Request(_resultBuffer, (req) =>
+        {
+            sw.Stop();
 
-        float[] ratios = new float[colorCount];
-        int totalPixels = targetTexture.width * targetTexture.height;
-        for (int i = 0; i < colorCount; i++)
+            if (req.hasError)
+            {
+                UnityEngine.Debug.LogError("AsyncGPUReadback failed.");
+                onCompleted?.Invoke(new float[colorCount], sw.ElapsedMilliseconds);
+                return;
+            }
+
+            uint[] pixelCounts = req.GetData<uint>().ToArray();
+            float[] ratios = CalculateRatios(pixelCounts, targetTexture.width, targetTexture.height);
+            onCompleted?.Invoke(ratios, sw.ElapsedMilliseconds);
+        });
+    }
+
+    /// <summary>
+    /// ピクセルカウントから割合を算出
+    /// </summary>
+    private float[] CalculateRatios(uint[] pixelCounts, int width, int height)
+    {
+        float[] ratios = new float[pixelCounts.Length];
+        int totalPixels = width * height;
+        for (int i = 0; i < pixelCounts.Length; i++)
         {
             ratios[i] = totalPixels > 0 ? (float)pixelCounts[i] / totalPixels : 0f;
         }
-
-        sw.Stop();
-        onCompleted?.Invoke(ratios, sw.ElapsedMilliseconds);
+        return ratios;
     }
 }
