@@ -168,22 +168,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Current screen size: {screenSize.x}x{screenSize.y}");
         var aspectRatio = screenSize.x / screenSize.y;
         Debug.Log($"Current aspect ratio: {aspectRatio}");
-        var adjustRatio = 1f;
-        if (aspectRatio < 1612 / 720)
-        {
-            Debug.LogWarning("y length large");
-            adjustRatio = 1612 / screenSize.x;
-        }
-        else if (aspectRatio > 1612 / 720)
-        {
-            Debug.LogWarning("x length large");
-            adjustRatio = 720 / screenSize.y;
-        }
-        else
-        {
-            Debug.LogWarning("Aspect ratio is 16:9.");
-            adjustRatio = 1612 / screenSize.x;
-        }
+        var adjustRatio = 1612 / screenSize.x; // 1612は想定している画面幅;
 
         // 生成
         var ink = Instantiate(inkPrefab, inks);
