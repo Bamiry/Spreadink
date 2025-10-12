@@ -18,7 +18,7 @@ public class VolumeChange : MonoBehaviour
             // SoundManagerの現在の音量で初期値を設定
             if (SoundManager.Instance != null)
             {
-                slider.value = SoundManager.Instance.MasterVolumeScaler;
+                slider.SetValueWithoutNotify(SoundManager.Instance.MasterVolumeScaler);
             }
         }
     }
