@@ -1,0 +1,37 @@
+#pragma kernel CSMain
+
+// 入力データ
+Texture2D<float4> InputTexture;
+StructuredBuffer<float4> TargetColors; // float4の色のリストを受け取る
+uint TargetColorCount;
+float Tolerance;
+
+// 出力データ (結果を格納する配列)
+RWStructuredBuffer<uint> ResultBuffer;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    uint width, height;
+    InputTexture.GetDimensions(width, height);
+    if (id.x >= width || id.y >= height)
+    {
+        return;
+    }
+
+    float4 pixelColor = InputTexture[id.xy];
+    
+    // 判定したい色のリストをループでチェック
+    for (uint i = 0; i < TargetColorCount; i++)
+    {
+        float dist = distance(pixelColor.rgb, TargetColors[i].rgb);
+        
+        // いずれかの色に近かったら
+        if (dist <= Tolerance)
+        {
+            // 対応するインデックスのカウンターを増やす
+            InterlockedAdd(ResultBuffer[i], 1);
+            break;
+        }
+    }
+}
