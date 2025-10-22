@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using UnityEngine.Rendering;
 
 public class ColorCounter : MonoBehaviour
 {
@@ -23,7 +24,9 @@ public class ColorCounter : MonoBehaviour
         _colorsBuffer?.Release();
     }
 
-    // 色のリストを受け取り、各色の割合(float)と実行時間(ms)を返すように変更
+    /// <summary>
+    /// 色リストを受け取り、各色の割合(float)と実行時間(ms)を返す
+    /// </summary>
     public void CountEachColor(RenderTexture targetTexture, List<Color> colors, Action<float[], long> onCompleted)
     {
         if (colors == null || colors.Count == 0)
@@ -36,40 +39,64 @@ public class ColorCounter : MonoBehaviour
 
         var sw = Stopwatch.StartNew();
 
-        // 1. 色リスト用のバッファを準備
+        // --- 1. バッファの準備 ---
         _colorsBuffer?.Release();
-        _colorsBuffer = new ComputeBuffer(colorCount, sizeof(float) * 4); // float4
-                                                                          // ColorからVector4の配列に変換してバッファにセット
+        _colorsBuffer = new ComputeBuffer(colorCount, sizeof(float) * 4);
         _colorsBuffer.SetData(colors.Select(c => (Vector4)c).ToArray());
 
-        // 2. 結果格納用のバッファを準備（サイズを色の数に合わせる）
         _resultBuffer?.Release();
         _resultBuffer = new ComputeBuffer(colorCount, sizeof(uint));
-        _resultBuffer.SetData(new uint[colorCount]); // 0で初期化
+        _resultBuffer.SetData(new uint[colorCount]);
 
-        // 3. シェーダーにデータを設定
+        // --- 2. シェーダー設定 ---
         computeShader.SetTexture(_kernelIndex, "InputTexture", targetTexture);
         computeShader.SetBuffer(_kernelIndex, "TargetColors", _colorsBuffer);
         computeShader.SetInt("TargetColorCount", colorCount);
         computeShader.SetFloat("Tolerance", _tolerance);
         computeShader.SetBuffer(_kernelIndex, "ResultBuffer", _resultBuffer);
 
-        // 4. 実行と結果取得
+        // --- 3. 実行 ---
         int threadGroupsX = Mathf.CeilToInt(targetTexture.width / 8.0f);
         int threadGroupsY = Mathf.CeilToInt(targetTexture.height / 8.0f);
         computeShader.Dispatch(_kernelIndex, threadGroupsX, threadGroupsY, 1);
 
+#if UNITY_WEBGL
+        // ✅ WebGL (WebGPU)では非同期読み出しを使用
+        UnityEngine.Debug.Log("Using AsyncGPUReadback for WebGL");
+        AsyncGPUReadback.Request(_resultBuffer, (req) =>
+        {
+            sw.Stop();
+            if (req.hasError)
+            {
+                UnityEngine.Debug.LogError("AsyncGPUReadback failed.");
+                onCompleted?.Invoke(new float[colorCount], sw.ElapsedMilliseconds);
+                return;
+            }
+
+            uint[] pixelCounts = req.GetData<uint>().ToArray();
+            float[] ratios = CalculateRatios(pixelCounts, targetTexture.width, targetTexture.height);
+            onCompleted?.Invoke(ratios, sw.ElapsedMilliseconds);
+        });
+#else
+        UnityEngine.Debug.Log("Using synchronous readback");
+        // ✅ 通常環境では同期読み出しでOK
         uint[] pixelCounts = new uint[colorCount];
         _resultBuffer.GetData(pixelCounts);
 
-        float[] ratios = new float[colorCount];
-        int totalPixels = targetTexture.width * targetTexture.height;
-        for (int i = 0; i < colorCount; i++)
+        float[] ratios = CalculateRatios(pixelCounts, targetTexture.width, targetTexture.height);
+        sw.Stop();
+        onCompleted?.Invoke(ratios, sw.ElapsedMilliseconds);
+#endif
+    }
+
+    private float[] CalculateRatios(uint[] pixelCounts, int width, int height)
+    {
+        float[] ratios = new float[pixelCounts.Length];
+        int totalPixels = width * height;
+        for (int i = 0; i < pixelCounts.Length; i++)
         {
             ratios[i] = totalPixels > 0 ? (float)pixelCounts[i] / totalPixels : 0f;
         }
-
-        sw.Stop();
-        onCompleted?.Invoke(ratios, sw.ElapsedMilliseconds);
+        return ratios;
     }
 }
