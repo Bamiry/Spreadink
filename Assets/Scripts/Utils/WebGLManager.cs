@@ -6,9 +6,33 @@ public class WebGLManager : MonoBehaviour
     private bool isLandscape = false;
     private float screenAspectRatio = 0f;
     [SerializeField] private GameObject landscapeCheckPannel;
-    
+    [SerializeField] private GameObject webGPUCheckPannel;
+    private bool isWebGPUAvailable = true;
+
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [DllImport("__Internal")]
+    private static extern int IsWebGPUAvailable();
+#endif
+
+    void Start()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        if (IsWebGPUAvailable() == 0)
+        {
+            webGPUCheckPannel.SetActive(true);
+            isWebGPUAvailable = false;
+        }
+#else
+        Debug.Log("WebGPU check only available in WebGL build.");
+#endif
+    }
     private void Update()
     {
+        if (!isWebGPUAvailable)
+        {
+            return;
+        }
         // 毎フレーム横画面判定を実行
         CheckScreenOrientation();
     }
